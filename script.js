@@ -81,9 +81,13 @@ function buildInvitationUrl(baseUrl, name) {
   return `${baseUrl}${separator}to=${encodeNameForInvitation(name)}`;
 }
 
-function buildWhatsAppUrl(invitation) {
+function buildMessage(invitation) {
   const template = messageTemplateInput.value.trim() || DEFAULT_MESSAGE_TEMPLATE;
-  const message = template.replaceAll("{nama}", invitation.name).replaceAll("{link}", invitation.url);
+  return template.replaceAll("{nama}", invitation.name).replaceAll("{link}", invitation.url);
+}
+
+function buildWhatsAppUrl(invitation) {
+  const message = buildMessage(invitation);
   return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
 
@@ -148,6 +152,7 @@ function renderResults() {
   resultBody.innerHTML = generatedInvitations
     .map((invitation, index) => {
       const waUrl = buildWhatsAppUrl(invitation);
+      const message = buildMessage(invitation);
 
       return `
         <tr>
@@ -159,9 +164,14 @@ function renderResults() {
             </a>
           </td>
           <td data-label="Aksi">
-            <a class="share-button" href="${escapeAttribute(waUrl)}" target="_blank" rel="noopener noreferrer">
-              Share via WA
-            </a>
+            <div class="row-actions">
+              <button class="copy-button" type="button" data-message="${escapeAttribute(message)}">
+                Salin
+              </button>
+              <a class="share-button" href="${escapeAttribute(waUrl)}" target="_blank" rel="noopener noreferrer">
+                Share via WA
+              </a>
+            </div>
           </td>
         </tr>
       `;
@@ -214,6 +224,35 @@ messageTemplateInput.addEventListener("input", () => {
   renderResults();
   saveState();
 });
+resultBody.addEventListener("click", async (event) => {
+  const copyButton = event.target.closest(".copy-button");
+  if (!copyButton) {
+    return;
+  }
+
+  await copyText(copyButton.dataset.message || "");
+  copyButton.textContent = "Tersalin";
+  setTimeout(() => {
+    copyButton.textContent = "Salin";
+  }, 1400);
+});
+
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.append(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  textarea.remove();
+}
 
 greetingTypeInput.value = DEFAULT_GREETING_TYPE;
 messageTemplateInput.value = DEFAULT_MESSAGE_TEMPLATE;

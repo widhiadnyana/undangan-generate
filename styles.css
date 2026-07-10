@@ -324,19 +324,41 @@ tbody tr:hover {
   font-size: 0.92rem;
 }
 
+.row-actions {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.copy-button,
 .share-button {
   display: inline-flex;
   min-height: 38px;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: var(--wa);
-  color: #fff;
   padding: 0 14px;
-  text-decoration: none;
   font-size: 0.9rem;
   font-weight: 850;
   white-space: nowrap;
+}
+
+.copy-button {
+  border: 1px solid var(--border-strong);
+  background: #fff;
+  color: var(--text);
+  box-shadow: none;
+}
+
+.copy-button:hover {
+  background: var(--surface-soft);
+}
+
+.share-button {
+  background: var(--wa);
+  color: #fff;
+  text-decoration: none;
 }
 
 .share-button:hover {
@@ -489,6 +511,13 @@ tbody tr:hover {
     max-width: none;
   }
 
+  .row-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .copy-button,
   .share-button {
     width: 100%;
   }
