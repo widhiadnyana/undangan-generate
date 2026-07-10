@@ -2,23 +2,64 @@ const STORAGE_KEY = "undangan-generator-state";
 
 const baseUrlInput = document.querySelector("#baseUrl");
 const namesInput = document.querySelector("#namesInput");
+const greetingTypeInput = document.querySelector("#greetingType");
 const messageTemplateInput = document.querySelector("#messageTemplate");
 const generateButton = document.querySelector("#generateButton");
 const resetButton = document.querySelector("#resetButton");
 const resultBody = document.querySelector("#resultBody");
 const countBadge = document.querySelector("#countBadge");
 
-const DEFAULT_MESSAGE_TEMPLATE = `Kepada Yth.
-Bapak/Ibu/Saudara/i {nama}
+const MESSAGE_TEMPLATES = {
+  formal: `Kepada Yth.
+{nama}
 
 Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami.
 
 Berikut link undangan kami:
 {link}
 
-Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
 
-Terima kasih.`;
+Terima kasih.`,
+  english: `Dear {nama},
+
+With great joy, we would like to invite you to celebrate our wedding day.
+
+Please find our invitation link below:
+{link}
+
+Your presence and prayers would mean so much to us.
+
+Thank you.`,
+  muslim: `Assalamu'alaikum Warahmatullahi Wabarakatuh
+
+Kepada Yth.
+{nama}
+
+Tanpa mengurangi rasa hormat, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami.
+
+Berikut link undangan kami:
+{link}
+
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
+
+Wassalamu'alaikum Warahmatullahi Wabarakatuh`,
+  hindu: `Om Swastyastu
+
+Kepada Yth.
+{nama}
+
+Atas asung kerta wara nugraha Ida Sang Hyang Widhi Wasa, tanpa mengurangi rasa hormat, kami mengundang Bapak/Ibu/Saudara/i dalam Upacara Manusa Yadnya Pawiwahan (Pernikahan) kami :
+
+{link}
+
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
+
+Om Shanti Shanti Shanti Om`,
+};
+
+const DEFAULT_GREETING_TYPE = "formal";
+const DEFAULT_MESSAGE_TEMPLATE = MESSAGE_TEMPLATES[DEFAULT_GREETING_TYPE];
 
 let generatedInvitations = [];
 
@@ -67,6 +108,7 @@ function saveState() {
   const state = {
     baseUrl: baseUrlInput.value,
     namesInput: namesInput.value,
+    greetingType: greetingTypeInput.value,
     messageTemplate: messageTemplateInput.value,
     generatedInvitations,
   };
@@ -83,6 +125,7 @@ function loadState() {
     const state = JSON.parse(rawState);
     baseUrlInput.value = state.baseUrl || baseUrlInput.value;
     namesInput.value = state.namesInput || "";
+    greetingTypeInput.value = MESSAGE_TEMPLATES[state.greetingType] ? state.greetingType : DEFAULT_GREETING_TYPE;
     messageTemplateInput.value = state.messageTemplate || DEFAULT_MESSAGE_TEMPLATE;
     generatedInvitations = Array.isArray(state.generatedInvitations) ? state.generatedInvitations : [];
   } catch {
@@ -162,11 +205,17 @@ resetButton.addEventListener("click", () => {
 
 baseUrlInput.addEventListener("input", saveState);
 namesInput.addEventListener("input", saveState);
+greetingTypeInput.addEventListener("change", () => {
+  messageTemplateInput.value = MESSAGE_TEMPLATES[greetingTypeInput.value] || DEFAULT_MESSAGE_TEMPLATE;
+  renderResults();
+  saveState();
+});
 messageTemplateInput.addEventListener("input", () => {
   renderResults();
   saveState();
 });
 
+greetingTypeInput.value = DEFAULT_GREETING_TYPE;
 messageTemplateInput.value = DEFAULT_MESSAGE_TEMPLATE;
 loadState();
 renderResults();
