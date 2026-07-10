@@ -2,10 +2,23 @@ const STORAGE_KEY = "undangan-generator-state";
 
 const baseUrlInput = document.querySelector("#baseUrl");
 const namesInput = document.querySelector("#namesInput");
+const messageTemplateInput = document.querySelector("#messageTemplate");
 const generateButton = document.querySelector("#generateButton");
 const resetButton = document.querySelector("#resetButton");
 const resultBody = document.querySelector("#resultBody");
 const countBadge = document.querySelector("#countBadge");
+
+const DEFAULT_MESSAGE_TEMPLATE = `Kepada Yth.
+Bapak/Ibu/Saudara/i {nama}
+
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami.
+
+Berikut link undangan kami:
+{link}
+
+Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
+
+Terima kasih.`;
 
 let generatedInvitations = [];
 
@@ -28,7 +41,8 @@ function buildInvitationUrl(baseUrl, name) {
 }
 
 function buildWhatsAppUrl(invitation) {
-  const message = `Halo ${invitation.name}, berikut link undangan untuk Anda: ${invitation.url}`;
+  const template = messageTemplateInput.value.trim() || DEFAULT_MESSAGE_TEMPLATE;
+  const message = template.replaceAll("{nama}", invitation.name).replaceAll("{link}", invitation.url);
   return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
 
@@ -53,6 +67,7 @@ function saveState() {
   const state = {
     baseUrl: baseUrlInput.value,
     namesInput: namesInput.value,
+    messageTemplate: messageTemplateInput.value,
     generatedInvitations,
   };
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -68,6 +83,7 @@ function loadState() {
     const state = JSON.parse(rawState);
     baseUrlInput.value = state.baseUrl || baseUrlInput.value;
     namesInput.value = state.namesInput || "";
+    messageTemplateInput.value = state.messageTemplate || DEFAULT_MESSAGE_TEMPLATE;
     generatedInvitations = Array.isArray(state.generatedInvitations) ? state.generatedInvitations : [];
   } catch {
     sessionStorage.removeItem(STORAGE_KEY);
@@ -140,12 +156,17 @@ generateButton.addEventListener("click", () => {
 resetButton.addEventListener("click", () => {
   namesInput.value = "";
   generatedInvitations = [];
-  sessionStorage.removeItem(STORAGE_KEY);
   renderResults();
+  saveState();
 });
 
 baseUrlInput.addEventListener("input", saveState);
 namesInput.addEventListener("input", saveState);
+messageTemplateInput.addEventListener("input", () => {
+  renderResults();
+  saveState();
+});
 
+messageTemplateInput.value = DEFAULT_MESSAGE_TEMPLATE;
 loadState();
 renderResults();

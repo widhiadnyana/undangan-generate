@@ -200,6 +200,10 @@ textarea {
   line-height: 1.55;
 }
 
+.message-template {
+  min-height: 180px;
+}
+
 input:focus,
 textarea:focus {
   border-color: var(--primary);
@@ -393,6 +397,10 @@ tbody tr:hover {
 
   textarea {
     min-height: 210px;
+  }
+
+  .message-template {
+    min-height: 170px;
   }
 
   .actions {
