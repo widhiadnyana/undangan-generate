@@ -86,8 +86,13 @@ function buildMessage(invitation) {
   return template.replaceAll("{nama}", invitation.name).replaceAll("{link}", invitation.url);
 }
 
-function buildWhatsAppUrl(invitation) {
+function buildWhatsAppMessage(invitation) {
   const message = buildMessage(invitation);
+  return message.startsWith(invitation.url) ? message : `${invitation.url}\n\n${message}`;
+}
+
+function buildWhatsAppUrl(invitation) {
+  const message = buildWhatsAppMessage(invitation);
   return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
 
