@@ -87,8 +87,7 @@ function buildMessage(invitation) {
 }
 
 function buildWhatsAppMessage(invitation) {
-  const message = buildMessage(invitation);
-  return message.startsWith(invitation.url) ? message : `${invitation.url}\n\n${message}`;
+  return buildMessage(invitation);
 }
 
 function buildWhatsAppUrl(invitation) {
