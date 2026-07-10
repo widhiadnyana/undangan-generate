@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Generator Link Undangan</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="header-band">
+        <div>
+          <p class="eyebrow">Generator undangan</p>
+          <h1>Buat link undangan dengan cepat</h1>
+          <p class="intro">
+            Tempel daftar nama, generate link personal, lalu kirim langsung via WhatsApp.
+          </p>
+        </div>
+      </section>
+
+      <div class="content-grid">
+        <section class="workspace" aria-label="Form generator undangan">
+          <div class="panel-title">
+            <h2>Input</h2>
+            <p>Satu nama per baris.</p>
+          </div>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>Link dasar undangan</span>
+              <input id="baseUrl" type="url" value="https://asd.com/pernikahan/" placeholder="https://asd.com/pernikahan/">
+            </label>
+
+            <label class="field">
+              <span>Nama undangan</span>
+              <textarea id="namesInput" rows="10" placeholder="Budi Santoso&#10;Ibu Sari dan Keluarga&#10;Pak Ahmad"></textarea>
+            </label>
+
+            <div class="actions">
+              <button class="primary-button" id="generateButton" type="button">Generate</button>
+              <button class="secondary-button" id="resetButton" type="button">Reset</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="result-section" aria-label="Daftar link undangan">
+          <div class="result-header">
+            <div>
+              <h2>Daftar undangan</h2>
+              <p>Link siap dibuka atau dibagikan.</p>
+            </div>
+            <span id="countBadge">0 nama</span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Link undangan</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="resultBody">
+                <tr class="empty-row">
+                  <td colspan="4">Belum ada link. Masukkan nama lalu klik Generate.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
